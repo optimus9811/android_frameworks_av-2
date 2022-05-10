@@ -1788,15 +1788,13 @@ void CCodec::start() {
         return;
     }
 
-    err2 = mChannel->requestInitialInputBuffers();
-
-    if (err2 != OK) {
-        ALOGE("Initial request for Input Buffers failed");
-        mCallback->onError(err2,ACTION_CODE_FATAL);
-        return;
-    }
     mCallback->onStartCompleted();
 
+    err2 = mChannel->requestInitialInputBuffers();
+    if (err2 != OK) {
+        ALOGE("Initial request for Input Buffers failed");
+        mCallback->onError(err2, ACTION_CODE_FATAL);
+    }
 }
 
 void CCodec::initiateShutdown(bool keepComponentAllocated) {
@@ -2079,7 +2077,11 @@ void CCodec::signalResume() {
         state->set(RUNNING);
     }
 
-    (void)mChannel->requestInitialInputBuffers();
+    status_t err = mChannel->requestInitialInputBuffers();
+    if (err != OK) {
+        ALOGE("Resume request for Input Buffers failed");
+        mCallback->onError(err, ACTION_CODE_FATAL);
+    }
 }
 
 void CCodec::signalSetParameters(const sp<AMessage> &msg) {
