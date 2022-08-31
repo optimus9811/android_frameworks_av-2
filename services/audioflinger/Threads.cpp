@@ -6292,7 +6292,8 @@ void AudioFlinger::DirectOutputThread::onAddNewTrack_l()
                 mFlushPending = true;
             }
         } else /* mType == OFFLOAD */ {
-            if (previousTrack->sessionId() != latestTrack->sessionId()) {
+            if (previousTrack->sessionId() != latestTrack->sessionId() ||
+                previousTrack->isFlushPending()) {
                 mFlushPending = true;
             }
         }
